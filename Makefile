@@ -18,3 +18,5 @@ setup:
 	@echo "=========|| The pipe has been updated successfully ||========="
 	.venv/bin/python -m pip install -r requirements.txt 
 	@echo "=========|| The requirements have been installed successfully ||========="
+	unzip data.zip
+	@echo "=========|| The data has been successfully unzipped ||========="

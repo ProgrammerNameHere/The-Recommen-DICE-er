@@ -34,6 +34,7 @@ Or ....
     source .venv/bin/activate
     pip install --upgrade pip
     pip install -r requirements.txt
+    unzip data.zip
 ```
     
 ### **`WindowsOS`** type the following commands :
@@ -48,6 +49,7 @@ Or ....
     .venv\Scripts\Activate.ps1
     python -m pip install --upgrade pip
     pip install -r requirements.txt
+    Expand-Archive data.zip -DestinationPath data
     ```
 
     For `Git-bash` CLI :
@@ -58,6 +60,7 @@ Or ....
     source .venv/Scripts/activate
     python -m pip install --upgrade pip
     pip install -r requirements.txt
+    unzip data.zip
     ```
 
     **`Note:`**
