@@ -14,3 +14,5 @@ missingno==0.5.2
 pydot
 protobuf
 tensorflow==2.15
+pickle
+joblib
