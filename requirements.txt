@@ -13,7 +13,9 @@ pytest==7.3.1
 missingno==0.5.2
 pydot
 protobuf
-tensorflow==2.15
-tensorflow_recommenders
+tensorflow==2.15.0
+tensorflow-recommenders
+tensorflow-datasets
 streamlit
 wordcloud
+xmltodict
