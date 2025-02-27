@@ -19,27 +19,25 @@ def ratelist(dataframe,ordered_by ='usersrated', games_to_rate = 10 ):
     return games_list, select_desc
 
 
-# Function to collect ratings for one player
+# Function to collect ratings
 def collect_ratings(username, boardgames):
     ratings = []
+
     for game in boardgames:
-        # Ask if the user knows the game
-        know_game = st.radio(f"Please Rate {game}:", ["I don't know", '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], key=f"{game}_know", horizontal = True)
-        
-        if know_game == "I don't know":
-            # Ask for a rating if they know the game
-            ratings.append(None)
-        else:
-            # Ask for a rating if they know the game
-            rating = know_game
-            ratings.append(rating)
+        # Initialize session state only once per game
+        if f"{game}_rating" not in st.session_state:
+            st.session_state[f"{game}_rating"] = "I don't know"
 
-    # Create a new DataFrame for this user's ratings
-    new_data = pd.DataFrame({
-        'username': [username] * len(boardgames),
-        'boardgame': boardgames,
-        'rating': ratings
-    })
+        # Radio button for rating (session state key ensures persistence)
+        rating = st.radio(
+            f"Rate {game}:",
+            options=["I don't know"] + [str(i) for i in range(11)],  # ['I don't know', '0', ..., '10']
+            key=f"{game}_rating",
+            horizontal=True
+        )
 
-    return new_data
-    
+        # Convert valid ratings to integer, keep "I don't know" as None
+        ratings.append(None if rating == "I don't know" else int(rating))
+
+    # Create a DataFrame
+    return pd.DataFrame({'username': username, 'boardgame': boardgames, 'rating': ratings})
