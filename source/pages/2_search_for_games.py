@@ -28,32 +28,36 @@ if 'ratings_df' not in st.session_state:
 
 
 
-
-# Input for the first player
 username = st.text_input("Enter your username:")
 
 if username:
-    # Create a search input for the game name
-    search_text = st.text_input("Search for a board game:")
+    
+    # Convert column to list for autocomplete
+    autocomplete_list = [''] + df_games['name'].tolist()
 
-    # If there is input, filter the games in df_games
-    if search_text:
-        # Filter the games based on the search input (case insensitive)
-        filtered_games = df_games[df_games['name'].str.contains(search_text, case=False, na=False)]
+    # Using a selectbox for autocomplete
+    selected_name = st.selectbox("Choose a name", options=autocomplete_list)
 
-        # If there are matching results, show them in a selectbox
-        if not filtered_games.empty:
-           
-            game_name = st.selectbox("Select a game", filtered_games['name'].tolist())
-            st.write(f"You selected: {game_name}")
-            boardgames=[game_name]  #pass variable game_name to list boardgames to avoid an error
-            if st.button('Rate this game'): 
-                #print(boardgames) #test print for content of parameter boardgames
-                new_rating = collect_ratings(username,boardgames)
-                print(new_rating) #test print what's the output of the function?
-                st.write(new_rating)
-                #st.session_state.ratings_df = pd.concat([st.session_state.ratings_df, new_rating], ignore_index=True)
-        else:
-            st.write("No games found matching that search.")
-    else:
-        st.write("Enter a board game name to search.")
+    # Display the selected name
+    st.write(f"You selected: {selected_name}")
+
+# If there are matching results, show them in a selectbox
+    if selected_name:
+        
+        boardgames=[selected_name]  #pass variable game_name to list boardgames to avoid an error
+
+        # Ensure session state stores ratings DataFrame
+        if "ratings_df" not in st.session_state:
+            st.session_state["ratings_df"] = pd.DataFrame(columns=["username", "boardgame", "rating"])
+
+        # Collect ratings
+        ratings_df = collect_ratings(username, boardgames)
+
+        # Submit button
+        if st.button("Submit Ratings"):
+            st.session_state["ratings_df"] = pd.concat([st.session_state["ratings_df"], ratings_df], ignore_index=True)
+            st.success("Ratings submitted!")
+
+        # Display stored ratings
+        st.write("Collected Ratings:")
+        st.dataframe(st.session_state["ratings_df"])
