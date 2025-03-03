@@ -88,36 +88,73 @@ def create_retrieval_index(model, candidate_dataset):
 
 
 def create_input_df(df_complete, feature_list):
-
-    feature_list.append('name')
+    # Append 'name' to feature_list if it is not already present
+    if 'name' not in feature_list:
+        feature_list.append('name')
+    # Create df_input by selecting columns in the updated feature_list from df_complete
     df_input = df_complete[feature_list]
     
     return df_input
 
 
-def get_recommendation(user_input, df_complete, df_input, index):
+# def get_recommendation(user_input, df_complete, df_input, index):
 
-    user_input = user_input
+#     user_input = user_input
 
-    user_input_game_id = df_complete.loc[df_complete['name'] == user_input, 'game_id'].values
+#     user_input_game_id = df_complete.loc[df_complete['name'] == user_input, 'game_id'].values
 
-    query_features = np.array(df_input[df_input['name'] == user_input].iloc[:, 0:-1].values.tolist())
+#     query_features = np.array(df_input[df_input['name'] == user_input].iloc[:, 0:-1].values.tolist())
     
-    scores, recommended_game_ids = index(query_features, k=10)
-    recommended_game_ids.numpy()
+#     scores, recommended_game_ids = index(query_features, k=10)
+#     recommended_game_ids.numpy()
     
-    filtered_recommendations_ids = recommended_game_ids[recommended_game_ids != user_input_game_id]
+#     filtered_recommendations_ids = recommended_game_ids[recommended_game_ids != user_input_game_id]
     
-    # Filter the DataFrame where 'game_id' is in the given array
-    filtered_games = df_complete[df_complete['game_id'].isin(filtered_recommendations_ids.numpy())]
+#     # Filter the DataFrame where 'game_id' is in the given array
+#     filtered_games = df_complete[df_complete['game_id'].isin(filtered_recommendations_ids.numpy())]
     
-    # Extract the 'name' column (game names)
-    game_names = filtered_games['name'].tolist()
+#     # Extract the 'name' column (game names)
+#     game_names = filtered_games['name'].tolist()
 
-    # Print the result
-    print(game_names)
-    print("Recommended Boardgames:", filtered_recommendations_ids.numpy())
+#     # Print the result
+#     print(game_names)
+#     print("Recommended Boardgames:", filtered_recommendations_ids.numpy())
    
-    return filtered_recommendations_ids.numpy(), game_names, query_features
+#     return filtered_recommendations_ids.numpy(), game_names, query_features
 
 
+def get_recommendation(user_inputs, df_complete, df_input, index):
+    # If the input is a single boardgame name (string), wrap it in a list.
+    if isinstance(user_inputs, str):
+        user_inputs = [user_inputs]
+    
+    # Retrieve the game IDs for all boardgames in the input.
+    user_input_game_ids = df_complete.loc[df_complete['name'].isin(user_inputs), 'game_id'].values
+
+    # Retrieve the feature vectors for each boardgame from your input DataFrame.
+    # Assuming that all columns except the last one contain the features.
+    query_features_list = df_input[df_input['name'].isin(user_inputs)].iloc[:, :-1].values.tolist()
+    query_features_array = np.array(query_features_list)
+    
+    # Aggregate the multiple boardgame features by averaging.
+    aggregated_query_features = np.mean(query_features_array, axis=0, keepdims=True)
+    
+    # Use the aggregated features to query the index for recommendations.
+    scores, recommended_game_ids = index(aggregated_query_features, k=10)
+    recommended_game_ids = recommended_game_ids.numpy()
+    
+    # Filter out any recommendations that are already part of the input.
+    filtered_recommendations_ids = [
+        game_id for game_id in recommended_game_ids[0]
+        if game_id not in user_input_game_ids
+    ]
+    
+    # Filter the complete DataFrame to get game names for the recommended IDs.
+    filtered_games = df_complete[df_complete['game_id'].isin(filtered_recommendations_ids)]
+    game_names = filtered_games['name'].tolist()
+    
+    # Print the result for debugging.
+    print("Recommended Boardgames IDs:", filtered_recommendations_ids)
+    print("Recommended Boardgames Names:", game_names)
+    
+    return filtered_recommendations_ids, game_names, aggregated_query_features
