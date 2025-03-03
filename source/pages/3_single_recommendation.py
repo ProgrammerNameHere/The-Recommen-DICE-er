@@ -6,6 +6,7 @@ import tensorflow as tf
 import tensorflow_recommenders as tfrs
 
 from model_utils import get_recommendation
+from prediction import recommend
                   
 
 st.title('Single Player Recommendation Page under Construction')
@@ -19,11 +20,26 @@ else:
 
 
 
-input = st.text_input("Enter your favorite boardgame:")
+# input = st.text_input("Enter your favorite boardgame:")
 
-if input:
-    st.write(f"You entered: {input}")     
+# if input:
+#     st.write(f"You entered: {input}")     
 
-    game_ids, game_names, query_features = get_recommendation('input')
+#     game_ids, game_names, query_features = get_recommendation('input', df_complete, df_input, index)
 
-    st.write(f'You should play: {game_names}')
+#     st.write(f'You should play: {game_names}')
+    
+        
+def main():
+    st.title("Game Recommendation System")
+    game_input = st.text_input("Enter a game:")
+    if st.button("Get Recommendations"):
+        try:
+            game_ids, game_names, query_features = recommend(game_input)
+            st.write("Recommended Game IDs:", game_ids)
+            st.write("Recommended Game Names:", game_names)
+        except Exception as e:
+            st.error("An error occurred: " + str(e))
+
+if __name__ == "__main__":
+    main()
