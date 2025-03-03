@@ -26,8 +26,13 @@ if 'ratings_df' not in st.session_state:
     except FileNotFoundError:
         st.session_state.ratings_df = pd.DataFrame(columns=['username', 'boardgame', 'rating'])
 
-
-
+# Load test data for debugging
+if st.button("Load Test User Data"):
+    st.session_state["ratings_df"] = pd.read_csv('data/example_user_ratings.csv')
+    if 'ratings_df' in st.session_state:
+        st.write('User Data successfully loaded')
+        
+       
 username = st.text_input("Enter your username:")
 
 if username:

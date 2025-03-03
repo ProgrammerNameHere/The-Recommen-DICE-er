@@ -7,7 +7,7 @@ import tensorflow_recommenders as tfrs
 
 from prediction import recommend
                   
-
+ 
 st.title('Single Player Recommendation Page under Construction')
 
 # Check if the DataFrame exists in session state

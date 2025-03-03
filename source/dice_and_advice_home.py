@@ -6,4 +6,3 @@ import streamlit as st
 st.title("Welcome to Dice and Advice")
 st.write("---")
 st.header("Presented by Game(K)Nights")
-
