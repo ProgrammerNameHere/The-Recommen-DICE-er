@@ -3,8 +3,12 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
 from sklearn.model_selection import train_test_split
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
 
 RSEED = 42
+
+
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
@@ -55,29 +59,6 @@ def create_candidate_dataset(candidate_data_dict, batch_size=32):
     
     return candidate_dataset
 
-# Function for creating train, validation and test tensorflow datasets
-
-def create_tf_datasets(df_features, test_size=0.2, random_state=RSEED, batch_size=32):
-
-    # Split feature dataset into train, validation, and test sets
-    train_data, test_data = train_test_split(df_features, test_size=0.2, random_state=RSEED)
-    train_data, val_data = train_test_split(train_data, test_size=test_size*0.5, random_state=RSEED)
-
-    def df_to_dataset(dataframe, shuffle=True, batch_size=batch_size):
-        dataframe = dataframe.copy()
-        ds = tf.data.Dataset.from_tensor_slices({"features": dataframe.to_numpy()})
-        if shuffle:
-            ds = ds.shuffle(buffer_size=len(dataframe))
-        ds = ds.batch(batch_size)
-        return ds
-
-    train_ds = df_to_dataset(train_data, batch_size=batch_size)
-    val_ds = df_to_dataset(val_data, shuffle=False, batch_size=batch_size)
-    test_ds = df_to_dataset(test_data, shuffle=False, batch_size=batch_size)
-    
-    return train_ds, val_ds, test_ds
-
-
 def create_retrieval_index(model, candidate_dataset):
 
     index = tfrs.layers.factorized_top_k.BruteForce(model.boardgame_model)
@@ -114,7 +95,7 @@ def get_recommendation(user_inputs, df_complete, df_input, index):
     aggregated_query_features = np.mean(query_features_array, axis=0, keepdims=True)
     
     # Use the aggregated features to query the index for recommendations.
-    scores, recommended_game_ids = index(aggregated_query_features, k=10)
+    scores, recommended_game_ids = index(aggregated_query_features, k=20)
     recommended_game_ids = recommended_game_ids.numpy()
     
     # Filter out any recommendations that are already part of the input.
@@ -132,3 +113,69 @@ def get_recommendation(user_inputs, df_complete, df_input, index):
     print("Recommended Boardgames Names:", game_names)
     
     return filtered_recommendations_ids, game_names, aggregated_query_features
+
+
+def gradient_style(row, total_rows):
+    """
+    Returns a list of CSS styles for a row in a DataFrame,
+    creating a gradient effect from the first row to the last row.
+    
+    Parameters:
+    - row: A row of the DataFrame (with .name used as the index)
+    - total_rows: Total number of rows in the DataFrame.
+    
+    For the first row (index 0), the background is light blue (rgb(173,216,230)).
+    For the last row, the background is white (rgb(255,255,255)).
+    """
+    if total_rows > 10:
+        total_rows = 10
+    
+    idx = row.name
+    # Compute a factor that decreases linearly from 1 to 0
+    factor = 1 - (idx / (total_rows - 1)) if total_rows > 1 else 1
+
+    # Interpolate between light blue (173,216,230) and white (255,255,255)
+    r = int(173 * factor + 255 * (1 - factor))
+    g = int(216 * factor + 255 * (1 - factor))
+    b = int(230 * factor + 255 * (1 - factor))
+    
+    # Return a style for each cell in this row
+    return [f"background-color: rgb({r}, {g}, {b})" for _ in row]
+
+
+
+def styled_scrollable_table(df, username_column="username", cmap_name="tab20c", max_height="400px"):
+    """
+    Styles a DataFrame by applying a unique background color to rows based on the user
+    and wraps the table in a scrollable container.
+
+    Parameters:
+        df (pandas.DataFrame): The DataFrame to style.
+        username_column (str): The column in the DataFrame that contains the username.
+        cmap_name (str): The matplotlib colormap name to use for generating colors.
+        max_height (str): The maximum height for the scrollable container (e.g., "400px").
+
+    Returns:
+        str: An HTML string of the styled, scrollable table.
+    """
+    # Generate a dynamic color mapping for unique users
+    unique_users = df[username_column].unique()
+    n_users = len(unique_users)
+    cmap = cm.get_cmap(cmap_name, n_users)
+    user_colors = {user: mcolors.to_hex(cmap(i)) for i, user in enumerate(unique_users)}
+    
+    # Define a helper function to style each row based on the username
+    def color_by_user(row):
+        user = row[username_column]
+        color = user_colors.get(user, "#FFFFFF")  # fallback to white if user not found
+        return [f"background-color: {color}"] * len(row)
+    
+    # Apply the styling to the DataFrame and convert to HTML
+    styled_html = df.style.apply(lambda row: color_by_user(row), axis=1).to_html(index=False)
+    
+    # Wrap the styled table in a scrollable container
+    scrollable_html = f"""
+    <div style="overflow-x: auto; max-height: {max_height}; border: 1px solid #ccc; padding: 10px;">
+        {styled_html}
+    """
+    return scrollable_html
