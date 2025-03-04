@@ -1,10 +1,15 @@
-,username,boardgame,rating
-0,A,Gloomhaven,7
-1,A,Eclipse,7
-2,A,Nemesis,7
-3,B,Agricola,7
-4,B,Patchwork,7
-5,B,Bohnanza,7
-6,C,Bingo,7
-7,C,Yahtzee,7
-8,C,Sudoku,7
+,Unnamed: 0,username,boardgame,rating
+0,0.0,Han,Gloomhaven,7
+1,1.0,Han,Eclipse,7
+2,2.0,Han,Nemesis,7
+3,3.0,Leia,Agricola,7
+4,4.0,Leia,Patchwork,7
+5,5.0,Leia,Bohnanza,7
+6,6.0,Chewie,Bingo,7
+7,7.0,Chewie,Yahtzee,7
+8,8.0,Chewie,Sudoku,7
+9,,Luke,CATAN,6
+10,,Luke,Carcassonne,3
+11,,Luke,Pandemic,6
+12,,Luke,7 Wonders,4
+13,,Luke,Terraforming Mars,10

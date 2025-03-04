@@ -1,9 +1,3 @@
-'''
-TODO: 
-- create variable active_user for the entire page, only ask for username if active_user is not defined (session state?, dummyname?) 
- 
-'''
-
 # imports
 import streamlit as st
 import pandas as pd
@@ -11,6 +5,11 @@ import pandas as pd
 # import user functions
 from utils import ratelist, collect_ratings
 
+st.set_page_config(
+    page_title="Get a suggestion",
+    page_icon=":game_die:",
+    layout="centered"
+)
 
 # read full board games information file from csv
 df_games = pd.read_csv('data/game_details_cleaned.csv')

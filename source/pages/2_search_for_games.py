@@ -2,11 +2,19 @@
 TODO: 
 - create variable active_user for the entire page, only ask for username if active_user is not defined (session state?, dummyname?) 
 
-ERROR: !!! function collect_ratings returns the value before the rating (=None) to the ratings dataframe but not the rating 
 '''
 # imports
 import streamlit as st
+
+st.set_page_config(
+    page_title="Rate your favorite Games",
+    page_icon=":game_die:",
+    layout="centered"
+)
+
 import pandas as pd
+from setup import *
+
 
 # import user functions
 from utils import collect_ratings
