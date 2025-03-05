@@ -19,7 +19,7 @@ def ratelist(dataframe,ordered_by ='usersrated', games_to_rate = 10 ):
     # sort the full games data frame by the selected ordered_by column
     df_sorted = dataframe.sort_values(by=ordered_by, ascending=ascndng)
     # select the first x games (x= games_to_rate) 
-    games_list = df_sorted['name'].head(games_to_rate).tolist()
+    games_list = df_sorted['name'].head(games_to_rate * 3).sample(games_to_rate).tolist()
     # a description text that can be printed
     select_desc = "Here are the top " + str(games_to_rate) + ' games by ' + ordered_by + ' for you:'
     # return a list of games and a string with a short description

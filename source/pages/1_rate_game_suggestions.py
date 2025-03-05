@@ -36,19 +36,26 @@ if username:
     #if make_suggestion_button:
 
     # Add a selectbox for number of games to rate 
-    number_of_games = st.sidebar.selectbox(
+    number_of_games = st.slider(
         'How many games would you like to rate?',
-        (5, 10, 20, 50)
+        min_value= 5,
+        max_value=50,
+        step=5
     )
 
+    sorting_dict = {
+        'Best Rated': 'rank',
+        'Most Rated': 'usersrated'
+    }
     # Add a selectbox for number of games to rate 
-    sortvariable = st.sidebar.selectbox(
+    sortvariable = st.selectbox(
         'By wich order should we sort?',
-        ('usersrated', 'rank' , 'average', 'bayesaverage')
+        options= sorting_dict.keys()
     )
+    
     ###########################
     # a bit dirty: just write the game list down here instead of using function game_list directly from function collect_ratings
-    boardgames, desctext = ratelist(dataframe=df_games, ordered_by=sortvariable, games_to_rate=number_of_games)
+    boardgames, desctext = ratelist(dataframe=df_games, ordered_by=sorting_dict[sortvariable], games_to_rate=number_of_games)
     ###########################
 
     # Collect ratings for the first player
