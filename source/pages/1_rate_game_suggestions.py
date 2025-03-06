@@ -42,10 +42,18 @@ if username:
         max_value=50,
         step=5
     )
-
+    
     sorting_dict = {
-        'Best Rated': 'rank',
-        'Most Rated': 'usersrated'
+        'Best Rated Overall': 'rank',
+        'Most Rated': 'usersrated',
+        'Best Rated Abstract Games': 'abstracts_rank',
+        'Best Rated Card Games': 'cgs_rank',
+        'Best Rated Childrens Games': 'childrensgames_rank',
+        'Best Rated Family Games': 'familygames_rank',
+        'Best Rated Party Games': 'partygames_rank', 
+        'Best Rated Strategy Games': 'strategygames_rank',
+        'Best Rated Thematic Games': 'thematic_rank',
+        'Best Rated War Games': 'wargames_rank',
     }
     # Add a selectbox for number of games to rate 
     sortvariable = st.selectbox(

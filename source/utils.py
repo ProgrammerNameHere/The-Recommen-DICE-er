@@ -11,15 +11,10 @@ def load_local_css(file_name: str):
 
 # Function to select a list of games for rating
 def ratelist(dataframe,ordered_by ='usersrated', games_to_rate = 10 ):
-    # depending on the sorted column descending or ascending order is needed 
-    if ordered_by in 'usersrated, average, bayesaverage':
-        ascndng = False
-    elif ordered_by in('rank'):
-        ascndng = True
     # sort the full games data frame by the selected ordered_by column
-    df_sorted = dataframe.sort_values(by=ordered_by, ascending=ascndng)
+    df_sorted = dataframe.sort_values(by=ordered_by, ascending=ordered_by.__contains__('rank'))
     # select the first x games (x= games_to_rate) 
-    games_list = df_sorted['name'].head(games_to_rate * 3).sample(games_to_rate).tolist()
+    games_list = df_sorted['name'].head(max(games_to_rate, 50)).sample(games_to_rate).tolist()
     # a description text that can be printed
     select_desc = "Here are the top " + str(games_to_rate) + ' games by ' + ordered_by + ' for you:'
     # return a list of games and a string with a short description
