@@ -71,10 +71,13 @@ if "ratings_df" in st.session_state and not st.session_state["ratings_df"].empty
                 (df_for_player_numbers['maxplayers'] >= player_number)
         ]
 
+        bgg_url = "https://www.boardgamegeek.com/boardgame/"
+        game_name_dict = dict(zip(filtered_recs_df.game_id, filtered_recs_df.name))
         ranks = list(range(1, len(filtered_recs_df) + 1))
         recommendations_df = pd.DataFrame({
             "Rank": ranks,
-            "Game Name": filtered_recs_df.name,
+            "Game Name": filtered_recs_df.game_id.map(
+                lambda x: f'<a href="{bgg_url+str(x)}"> {game_name_dict.get(x, "Unknown")}</a>'),
             "ID": filtered_recs_df.game_id
         })
          

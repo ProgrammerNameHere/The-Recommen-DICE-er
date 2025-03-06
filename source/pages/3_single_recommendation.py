@@ -76,12 +76,15 @@ if st.button("Get Recommendations", key="recs_1"):
                 (df_for_player_numbers['maxplayers'] >= player_number)
         ]
                 
+        bgg_url = "https://www.boardgamegeek.com/boardgame/"
+        game_name_dict = dict(zip(filtered_recs_df.game_id, filtered_recs_df.name))
         ranks = list(range(1, len(filtered_recs_df) + 1))
         recommendations_df = pd.DataFrame({
             "Rank": ranks,
-            "Game Name": filtered_recs_df.name,
+            "Game Name": filtered_recs_df.game_id.map(
+                lambda x: f'<a href="{bgg_url+str(x)}"> {game_name_dict.get(x, "Unknown")}</a>'),
             "ID": filtered_recs_df.game_id,
-            # 'Description': filtered_recs_df.description
+
         })
         
         
@@ -126,13 +129,16 @@ if st.button("Get Recommendations", key="recs_2"):
                 (df_for_player_numbers['maxplayers'] >= player_number)
         ]
 
+        bgg_url = "https://www.boardgamegeek.com/boardgame/"
+        game_name_dict = dict(zip(filtered_recs_df.game_id, filtered_recs_df.name))
         ranks = list(range(1, len(filtered_recs_df) + 1))
         recommendations_df = pd.DataFrame({
             "Rank": ranks,
-            "Game Name": filtered_recs_df.name,
-            "ID": filtered_recs_df.game_id
+            "Game Name": filtered_recs_df.game_id.map(
+                lambda x: f'<a href="{bgg_url+str(x)}"> {game_name_dict.get(x, "Unknown")}</a>'),
+            "ID": filtered_recs_df.game_id,
+
         })
-        
         recommendations_df = recommendations_df.reset_index(drop=True)
         
         styled_table = recommendations_df.head(10).style.apply(
